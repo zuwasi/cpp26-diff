@@ -1,0 +1,8 @@
+---
+--- Parasoft C++test BDF for C++26 project
+--- Note: C++test may need -std=c++2c or latest supported standard flag
+---
+compile;gcc_9-64;-std=c++2c;-I src;src/sensor_data.cpp
+compile;gcc_9-64;-std=c++2c;-I src;src/data_processor.cpp
+compile;gcc_9-64;-std=c++2c;-I src;src/config_manager.cpp
+compile;gcc_9-64;-std=c++2c;-I src;src/main.cpp
