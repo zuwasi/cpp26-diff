@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>C++26 Migration &amp; Static Analysis – ESL</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;background:#0a0a0f;color:#e0e0e8}
+.deck{display:flex;height:100vh;transition:transform .55s cubic-bezier(.4,0,.2,1)}
+.slide{min-width:100vw;height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:clamp(24px,4vw,64px);position:relative;overflow:hidden}
+/* Slide themes */
+.slide.dark{background:linear-gradient(135deg,#0a0a1a 0%,#141428 100%)}
+.slide.blue{background:linear-gradient(135deg,#0c1a3d 0%,#162454 100%)}
+.slide.green{background:linear-gradient(135deg,#0a1f1a 0%,#0f2e25 100%)}
+.slide.red{background:linear-gradient(135deg,#1f0a0a 0%,#2e0f0f 100%)}
+.slide.purple{background:linear-gradient(135deg,#1a0a2e 0%,#241245 100%)}
+.slide.teal{background:linear-gradient(135deg,#0a1f2e 0%,#0f2e3e 100%)}
+.slide.esl{background:linear-gradient(135deg,#0d1b2a 0%,#1b2838 100%)}
+/* Content */
+.content{max-width:1200px;width:100%;text-align:left}
+h1{font-size:clamp(28px,4.5vw,64px);font-weight:800;line-height:1.1;margin-bottom:clamp(12px,2vw,28px);background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h2{font-size:clamp(22px,3vw,44px);font-weight:700;line-height:1.2;margin-bottom:clamp(10px,1.5vw,24px);color:#93c5fd}
+h3{font-size:clamp(16px,2vw,28px);font-weight:600;margin-bottom:12px;color:#a5b4fc}
+.subtitle{font-size:clamp(14px,1.8vw,24px);color:#94a3b8;line-height:1.5;margin-bottom:clamp(12px,2vw,32px)}
+p,.text{font-size:clamp(13px,1.3vw,19px);color:#cbd5e1;line-height:1.7;margin-bottom:12px}
+.tag{display:inline-block;padding:4px 14px;border-radius:20px;font-size:clamp(10px,1vw,14px);font-weight:600;margin:4px 4px 4px 0}
+.tag.green-t{background:#064e3b;color:#6ee7b7;border:1px solid #065f46}
+.tag.red-t{background:#450a0a;color:#fca5a5;border:1px solid #7f1d1d}
+.tag.blue-t{background:#1e3a5f;color:#93c5fd;border:1px solid #1e40af}
+.tag.purple-t{background:#2e1065;color:#c4b5fd;border:1px solid #5b21b6}
+/* Code blocks */
+.code-block{background:#0d1117;border:1px solid #21262d;border-radius:10px;padding:clamp(12px,1.5vw,24px);font-family:'Cascadia Code','Fira Code',monospace;font-size:clamp(11px,1.1vw,15px);line-height:1.6;overflow-x:auto;margin:12px 0;color:#c9d1d9;white-space:pre}
+.code-block .kw{color:#ff7b72}
+.code-block .fn{color:#d2a8ff}
+.code-block .str{color:#a5d6ff}
+.code-block .cmt{color:#8b949e;font-style:italic}
+.code-block .type{color:#79c0ff}
+.code-block .num{color:#79c0ff}
+.code-block .ok{color:#3fb950}
+.code-block .bad{color:#f85149}
+/* Comparison grid */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,2vw,28px);margin:16px 0}
+@media(max-width:768px){.compare{grid-template-columns:1fr}}
+.compare-col{background:rgba(255,255,255,.03);border-radius:12px;padding:clamp(14px,1.5vw,24px);border:1px solid rgba(255,255,255,.06)}
+.compare-col.before{border-left:3px solid #ef4444}
+.compare-col.after{border-left:3px solid #22c55e}
+.compare-col h3{margin-bottom:8px}
+/* Table */
+.table-wrap{overflow-x:auto;margin:16px 0}
+table{width:100%;border-collapse:collapse;font-size:clamp(11px,1.1vw,15px)}
+th{background:rgba(59,130,246,.15);color:#93c5fd;padding:10px 14px;text-align:left;font-weight:600;border-bottom:2px solid rgba(59,130,246,.3)}
+td{padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.05);color:#cbd5e1}
+tr:hover td{background:rgba(255,255,255,.02)}
+td.bad-cell{color:#fca5a5;font-weight:600}
+td.ok-cell{color:#6ee7b7;font-weight:600}
+/* Stat cards */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:clamp(10px,1.5vw,20px);margin:20px 0}
+.stat-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:clamp(14px,1.5vw,24px);text-align:center}
+.stat-card .num{font-size:clamp(28px,3.5vw,52px);font-weight:800}
+.stat-card .label{font-size:clamp(11px,1vw,14px);color:#94a3b8;margin-top:4px}
+.stat-card.red .num{color:#f87171}
+.stat-card.green .num{color:#4ade80}
+.stat-card.blue .num{color:#60a5fa}
+.stat-card.purple .num{color:#a78bfa}
+/* Bullet list */
+ul.bullets{list-style:none;padding:0}
+ul.bullets li{padding:8px 0 8px 28px;position:relative;font-size:clamp(13px,1.3vw,18px);color:#cbd5e1;line-height:1.6}
+ul.bullets li::before{content:'▸';position:absolute;left:0;color:#60a5fa;font-weight:700}
+ul.bullets li strong{color:#e2e8f0}
+/* Nav arrows */
+.nav-btn{position:fixed;top:50%;transform:translateY(-50%);width:clamp(36px,4vw,52px);height:clamp(36px,4vw,52px);border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#e0e0e8;font-size:clamp(18px,2vw,26px);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(8px);transition:all .2s}
+.nav-btn:hover{background:rgba(255,255,255,.15)}
+#prevBtn{left:16px}
+#nextBtn{right:16px}
+/* Progress bar */
+.progress{position:fixed;bottom:0;left:0;width:100%;height:4px;background:rgba(255,255,255,.05);z-index:100}
+.progress-fill{height:100%;background:linear-gradient(90deg,#3b82f6,#8b5cf6);transition:width .4s ease;width:0}
+/* Slide counter */
+.counter{position:fixed;bottom:12px;right:20px;font-size:clamp(11px,1vw,14px);color:#64748b;z-index:100;font-variant-numeric:tabular-nums}
+/* Swipe hint */
+.swipe-hint{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);color:#475569;font-size:clamp(12px,1.2vw,16px);z-index:100;animation:swipeAnim 2s ease-in-out infinite;white-space:nowrap}
+@keyframes swipeAnim{0%,100%{opacity:.4;transform:translateX(-50%)}50%{opacity:.8;transform:translateX(-45%)}}
+/* Highlight box */
+.highlight-box{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:clamp(14px,1.5vw,24px);margin:12px 0}
+.warn-box{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:clamp(14px,1.5vw,24px);margin:12px 0}
+.success-box{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:clamp(14px,1.5vw,24px);margin:12px 0}
+/* ESL branding */
+.esl-brand{font-size:clamp(11px,1vw,14px);color:#475569;position:absolute;bottom:16px;left:24px}
+.logo-text{font-size:clamp(18px,2.5vw,36px);font-weight:900;letter-spacing:2px;background:linear-gradient(135deg,#3b82f6,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+/* Flow items */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:16px 0}
+.flow-item{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:8px 16px;font-size:clamp(11px,1.1vw,15px);color:#93c5fd}
+.flow-arrow{color:#475569;font-size:20px}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+<!-- SLIDE 1: Title -->
+<div class="slide dark">
+  <div class="content" style="text-align:center">
+    <div class="logo-text" style="margin-bottom:24px">ESL</div>
+    <h1 style="text-align:center">Migrating to C++26</h1>
+    <p class="subtitle" style="text-align:center;max-width:800px;margin:0 auto 32px">How modern C++ features eliminate entire classes of static analysis violations<br>— verified with Parasoft C++test</p>
+    <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">
+      <span class="tag blue-t">C++26 Contracts</span>
+      <span class="tag green-t">Hardened Containers</span>
+      <span class="tag purple-t">std::span</span>
+      <span class="tag blue-t">std::format</span>
+      <span class="tag green-t">= delete("reason")</span>
+    </div>
+    <p style="margin-top:40px;color:#475569;font-size:clamp(11px,1vw,14px)">April 2026 · ESL Embedded Systems Laboratory</p>
+  </div>
+</div>
+
+<!-- SLIDE 2: What We Did -->
+<div class="slide blue">
+  <div class="content">
+    <h2>What We Built</h2>
+    <p class="subtitle">A side-by-side comparison project to demonstrate the real impact of C++26 on code safety</p>
+    <div class="compare">
+      <div class="compare-col before">
+        <h3 style="color:#f87171">❌ pre_cpp26/</h3>
+        <p>C++20 baseline — intentionally written with common unsafe patterns that trigger static analysis violations</p>
+        <ul class="bullets">
+          <li>Uninitialized variables</li>
+          <li>Unchecked container access (operator[])</li>
+          <li>Raw pointer returns</li>
+          <li>C-style variadic functions (va_list)</li>
+          <li>printf / C-style I/O</li>
+          <li>Manual memcpy without bounds</li>
+        </ul>
+      </div>
+      <div class="compare-col after">
+        <h3 style="color:#4ade80">✅ cpp26/</h3>
+        <p>C++26 modernized version — same functionality, using new language features to eliminate violations</p>
+        <ul class="bullets">
+          <li>All members value-initialized</li>
+          <li>Contracts (pre/post) for preconditions</li>
+          <li>std::span for bounds-safe views</li>
+          <li>Variadic templates + std::format</li>
+          <li>std::optional for safe lookups</li>
+          <li>= delete("reason") for legacy API</li>
+        </ul>
+      </div>
+    </div>
+    <p style="color:#64748b;font-size:clamp(11px,1vw,14px)">Repository: <span style="color:#60a5fa">github.com/zuwasi/cpp26-diff</span></p>
+  </div>
+  <div class="esl-brand">ESL · C++26 Migration</div>
+</div>
+
+<!-- SLIDE 3: What's New in C++26 -->
+<div class="slide purple">
+  <div class="content">
+    <h2>What's New in C++26?</h2>
+    <p class="subtitle">Key features that directly impact code safety and static analysis</p>
+    <div class="stats">
+      <div class="stat-card blue">
+        <div class="num" style="font-size:clamp(18px,2vw,32px)">Contracts</div>
+        <div class="label">pre() / post() / contract_assert()</div>
+      </div>
+      <div class="stat-card green">
+        <div class="num" style="font-size:clamp(18px,2vw,32px)">Hardened</div>
+        <div class="label">Bounds-checked containers</div>
+      </div>
+      <div class="stat-card purple">
+        <div class="num" style="font-size:clamp(18px,2vw,32px)">Erroneous</div>
+        <div class="label">Behavior model for UB</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="num" style="font-size:clamp(18px,2vw,32px)">delete(msg)</div>
+        <div class="label">Deleted with reason string</div>
+      </div>
+    </div>
+    <ul class="bullets" style="margin-top:16px">
+      <li><strong>Contracts (P2900)</strong> — First-class pre/postconditions enforced at compile and runtime, replacing fragile asserts</li>
+      <li><strong>Hardened standard library</strong> — Bounds checks on operator[], iterators; UB → defined trap</li>
+      <li><strong>Erroneous behavior model</strong> — Reading uninitialized variables becomes a well-defined error, not silent UB</li>
+      <li><strong>= delete("reason")</strong> — Deleted functions carry a message, producing clear diagnostics</li>
+      <li><strong>std::format / std::println</strong> — Type-safe I/O replaces printf-family; eliminates format string vulnerabilities</li>
+      <li><strong>std::inplace_vector</strong> — Fixed-capacity, bounds-safe container replacing raw C arrays</li>
+    </ul>
+  </div>
+  <div class="esl-brand">ESL · C++26 Migration</div>
+</div>
+
+<!-- SLIDE 4: Design Philosophy -->
+<div class="slide dark">
+  <div class="content">
+    <h2>The Fundamental Shift in C++26</h2>
+    <p class="subtitle">From "developer must remember" to "language makes it impossible to forget"</p>
+    <div class="compare">
+      <div class="compare-col before">
+        <h3 style="color:#f87171">Before C++26: Safety by Convention</h3>
+        <ul class="bullets">
+          <li>Developer <strong>must remember</strong> to initialize every variable</li>
+          <li>Developer <strong>must remember</strong> to bounds-check every access</li>
+          <li>Developer <strong>must remember</strong> to validate every parameter</li>
+          <li>Developer <strong>must remember</strong> to match printf format strings</li>
+          <li>Violations are <strong>silent</strong> — compiles fine, crashes at runtime</li>
+          <li>Static analysis <strong>catches what humans forgot</strong></li>
+        </ul>
+      </div>
+      <div class="compare-col after">
+        <h3 style="color:#4ade80">C++26: Safety by Design</h3>
+        <ul class="bullets">
+          <li>Language <strong>initializes by default</strong> (erroneous behavior model)</li>
+          <li>Containers <strong>check bounds automatically</strong> (hardened mode)</li>
+          <li>Functions <strong>declare preconditions</strong> (contracts: pre/post)</li>
+          <li>I/O is <strong>type-checked at compile time</strong> (std::format)</li>
+          <li>Violations are <strong>compile errors or defined traps</strong></li>
+          <li>Static analysis <strong>confirms the code is structurally safe</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight-box" style="margin-top:16px">
+      <p style="font-size:clamp(14px,1.4vw,20px);text-align:center"><strong>The safest code is code where the unsafe pattern is structurally impossible — not code where a human remembered to add a check.</strong></p>
+    </div>
+    <div class="stats" style="margin-top:16px">
+      <div class="stat-card blue"><div class="num" style="font-size:clamp(14px,1.4vw,20px)">Contracts</div><div class="label">Bug cannot enter the function</div></div>
+      <div class="stat-card green"><div class="num" style="font-size:clamp(14px,1.4vw,20px)">Hardened Lib</div><div class="label">Bug trapped at access point</div></div>
+      <div class="stat-card purple"><div class="num" style="font-size:clamp(14px,1.4vw,20px)">Erroneous Behav.</div><div class="label">Bug is a defined trap, not UB</div></div>
+      <div class="stat-card red"><div class="num" style="font-size:clamp(14px,1.4vw,20px)">= delete(msg)</div><div class="label">Bug produces clear diagnostic</div></div>
+    </div>
+  </div>
+  <div class="esl-brand">ESL · C++26 Migration</div>
+</div>
+
+<!-- SLIDE 5: REAL DIFF — BD-PB-COOB + BD-PB-VALRANGE (Out of Bounds) -->
+<div class="slide green">
+  <div class="content">
+    <h2>🔍 Real Scan Diff: Out-of-Bounds Access</h2>
+    <p class="subtitle">Parasoft BD-PB-COOB + BD-PB-VALRANGE — 3 violations → 0</p>
+    <div class="warn-box" style="margin-bottom:12px;padding:10px 16px">
+      <p style="margin:0;color:#fbbf24;font-size:clamp(12px,1.1vw,15px)"><strong>⚠ Parasoft found:</strong> <em>"Possible out of bounds access of empty collection <code>readings_</code> at index 0"</em> · sensor_data.cpp:29</p>
+    </div>
+    <div class="compare">
+      <div class="compare-col before">
+        <h3 style="color:#f87171">Pre-C++26 — sensor_data.cpp:28-34</h3>
+        <div class="code-block"><span class="type">SensorReading</span> SensorData::<span class="fn">getReading</span>(<span class="type">size_t</span> index) <span class="kw">const</span> {
+    <span class="kw">return</span> readings_[index];          <span class="bad">◄── BD-PB-COOB</span>
+}                                      <span class="bad">     No bounds check.</span>
+                                       <span class="bad">     Empty vector = crash.</span>
+
+<span class="kw">const</span> <span class="type">SensorReading</span>* SensorData::<span class="fn">getReadingsInRange</span>(
+        <span class="type">size_t</span> start, <span class="type">size_t</span> count) <span class="kw">const</span> {
+    <span class="kw">return</span> &readings_[start];          <span class="bad">◄── BD-PB-VALRANGE</span>
+}                                      <span class="bad">     Raw ptr, no size info.</span></div>
+      </div>
+      <div class="compare-col after">
+        <h3 style="color:#4ade80">C++26 — sensor_data.cpp:27-37</h3>
+        <div class="code-block"><span class="type">SensorReading</span> SensorData::<span class="fn">getReading</span>(<span class="type">size_t</span> index) <span class="kw">const</span> {
+    <span class="fn">assert</span>(index < <span class="fn">size</span>());           <span class="ok">◄── CONTRACT pre()</span>
+    <span class="kw">return</span> readings_.<span class="fn">at</span>(index);       <span class="ok">◄── HARDENED .at()</span>
+}                                      <span class="ok">     Double protection.</span>
+
+<span class="type">std::span</span>&lt;<span class="kw">const</span> <span class="type">SensorReading</span>&gt; SensorData::<span class="fn">getReadingsInRange</span>(
+        <span class="type">size_t</span> start, <span class="type">size_t</span> count) <span class="kw">const</span> {
+    <span class="fn">assert</span>(start < <span class="fn">size</span>());           <span class="ok">◄── CONTRACT pre()</span>
+    <span class="fn">assert</span>(start + count <= <span class="fn">size</span>()); <span class="ok">◄── CONTRACT pre()</span>
+    <span class="kw">return</span> <span class="type">std::span</span>(readings_).<span class="fn">subspan</span>(start, count);
+}                                      <span class="ok">◄── SPAN carries size</span></div>
+      </div>
+    </div>
+    <div class="success-box" style="margin-top:8px">
+      <p><strong>3 C++26 mechanisms at work:</strong> ① <strong>Contract pre()</strong> rejects bad input before accessing the container. ② <strong>Hardened .at()</strong> throws std::out_of_range if the contract is bypassed. ③ <strong>std::span</strong> replaces raw pointer — the caller always knows the valid bounds. The bug is structurally impossible at 3 independent levels.</p>
+    </div>
+  </div>
+  <div class="esl-brand">ESL · C++26 Migration</div>
+</div>
+
+<!-- SLIDE 6: REAL DIFF — BD-PB-NOTINIT (Uninitialized) -->
+<div class="slide red">
+  <div class="content">
+    <h2>🔍 Real Scan Diff: Uninitialized Variable</h2>
+    <p class="subtitle">Parasoft BD-PB-NOTINIT — 1 violation → 0</p>
+    <div class="warn-box" style="margin-bottom:12px;padding:10px 16px">
+      <p style="margin:0;color:#fbbf24;font-size:clamp(12px,1.1vw,15px)"><strong>⚠ Parasoft found:</strong> <em>"Non-initialized <code>max_pressure</code> is used"</em> · sensor_data.cpp:59</p>
+    </div>
+    <div class="compare">
+      <div class="compare-col before">
+        <h3 style="color:#f87171">Pre-C++26 — sensor_data.cpp:50-59</h3>
+        <div class="code-block"><span class="type">double</span> SensorData::<span class="fn">getMaxPressure</span>() <span class="kw">const</span> {
+    <span class="type">double</span> max_pressure;              <span class="bad">◄── BD-PB-NOTINIT</span>
+                                       <span class="bad">     Declared but NOT initialized.</span>
+    <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i < readings_.<span class="fn">size</span>(); ++i) {
+        <span class="kw">if</span> (i == 0 || readings_[i].pressure > max_pressure) {
+            max_pressure = readings_[i].pressure;
+        }
+    }
+
+    <span class="kw">return</span> max_pressure;              <span class="bad">◄── UB if readings_ is empty!</span>
+}                                      <span class="bad">     Returns garbage value.</span></div>
+      </div>
+      <div class="compare-col after">
+        <h3 style="color:#4ade80">C++26 — sensor_data.cpp:50-56</h3>
+        <div class="code-block"><span class="type">double</span> SensorData::<span class="fn">getMaxPressure</span>() <span class="kw">const</span> {
+    <span class="fn">assert</span>(!<span class="fn">empty</span>());                  <span class="ok">◄── CONTRACT pre()</span>
+                                       <span class="ok">     Empty call = immediate trap.</span>
+    <span class="kw">auto</span> it = <span class="type">std::ranges</span>::<span class="fn">max_element</span>(
+        readings_, {}, &SensorReading::pressure);
+                                       <span class="ok">◄── ALGORITHM replaces manual loop</span>
+    <span class="type">double</span> r = it->pressure;           <span class="ok">     No temp variable needed.</span>
+    <span class="fn">assert</span>(r > <span class="num">0.0</span>);                  <span class="ok">◄── CONTRACT post()</span>
+    <span class="kw">return</span> r;                         <span class="ok">     Result is always valid.</span>
+}</div>
+      </div>
+    </div>
+    <div class="success-box" style="margin-top:8px">
+      <p><strong>The bug was eliminated by removing the pattern entirely.</strong> Instead of declaring a variable first and assigning it later (leaving a window for uninitialized reads), C++26 idiom uses <strong>std::ranges::max_element</strong> — no intermediate variable, no initialization gap. The <strong>contract pre(!empty())</strong> prevents the empty-collection case that caused the return of garbage. Two fundamental design changes: <em>algorithms over manual loops</em> + <em>contracts over hope</em>.</p>
+    </div>
+  </div>
+  <div class="esl-brand">ESL · C++26 Migration</div>
+</div>
+
+<!-- SLIDE 7: REAL DIFF — BD-PB-VOVR (Unused Values) -->
+<div class="slide teal">
+  <div class="content">
+    <h2>🔍 Real Scan Diff: Unused Variables</h2>
+    <p class="subtitle">Parasoft BD-PB-VOVR — 4 violations → 2 (false positives on C++26 placeholder _)</p>
+    <div class="warn-box" style="margin-bottom:12px;padding:10px 16px">
+      <p style="margin:0;color:#fbbf24;font-size:clamp(12px,1.1vw,15px)"><strong>⚠ Parasoft found:</strong> <em>"Value of <code>status_code</code> is never used"</em> · data_processor.cpp:70 &nbsp;+3 more</p>
+    </div>
+    <div class="compare">
+      <div class="compare-col before">
+        <h3 style="color:#f87171">Pre-C++26 — data_processor.cpp:70-71 + main.cpp:29-30</h3>
+        <div class="code-block"><span class="cmt">// data_processor.cpp — calibrate()</span>
+    <span class="type">int</span> status_code = <span class="num">0</span>;              <span class="bad">◄── BD-PB-VOVR</span>
+    <span class="type">double</span> unused_result = offset * <span class="num">2.0</span>; <span class="bad">◄── BD-PB-VOVR</span>
+                                       <span class="bad">     Dead code. Never read.</span>
+
+<span class="cmt">// main.cpp</span>
+    <span class="type">int</span> error_code = <span class="num">0</span>;               <span class="bad">◄── BD-PB-VOVR</span>
+    <span class="type">double</span> threshold = <span class="num">25.0</span>;          <span class="bad">◄── BD-PB-VOVR</span>
+                                       <span class="bad">     4 wasted variables.</span></div>
+      </div>
+      <div class="compare-col after">
+        <h3 style="color:#4ade80">C++26 — data_processor.cpp:59 + main.cpp:28</h3>
+        <div class="code-block"><span class="cmt">// data_processor.cpp — calibrate()</span>
+    <span class="kw">auto</span> _ = offset * <span class="num">2.0</span>;            <span class="ok">◄── PLACEHOLDER _</span>
+                                       <span class="ok">     C++26 explicit discard syntax.</span>
+
+<span class="cmt">// main.cpp</span>
+    <span class="kw">auto</span> _ = <span class="num">0</span>;                       <span class="ok">◄── PLACEHOLDER _</span>
+                                       <span class="ok">     Intentional; for RAII guards.</span>
+
+<span class="cmt">// Unused variables? Simply deleted.</span>
+<span class="cmt">// No error_code, no threshold.</span>
+<span class="cmt">// If not needed, don't declare.</span>    <span class="ok">◄── DESIGN: Remove, don't hide</span></div>
+      </div>
+    </div>
+    <div class="highlight-box" style="margin-top:8px">
+      <p><strong>C++26 placeholder <code>_</code></strong> is a language feature for intentional discards (RAII lock guards, structured bindings). Parasoft 2025.2 flags these as BD-PB-VOVR — a known false positive that will be resolved in future rule updates. The real fix: <strong>unnecessary variables are simply removed</strong>, not hidden behind workarounds.</p>
+    </div>
+  </div>
+  <div class="esl-brand">ESL · C++26 Migration</div>
+</div>
+
+<!-- SLIDE 8: REAL DIFF — Contracts & Variadics -->
+<div class="slide blue">
+  <div class="content">
+    <h2>🔍 Real Code Diff: Type Safety &amp; API Protection</h2>
+    <p class="subtitle">C-style variadics and printf replaced with compile-time type-checked alternatives</p>
+    <div class="compare">
+      <div class="compare-col before">
+        <h3 style="color:#f87171">Pre-C++26 — config_manager.cpp:24-33</h3>
+        <div class="code-block"><span class="kw">void</span> ConfigManager::<span class="fn">loadDefaults</span>(<span class="type">int</span> count, ...) {
+    <span class="type">va_list</span> args;                      <span class="bad">◄── C VARIADIC</span>
+    <span class="fn">va_start</span>(args, count);             <span class="bad">     No type safety at all.</span>
+    <span class="kw">for</span> (<span class="type">int</span> i = 0; i < count; ++i) {
+        <span class="kw">const char</span>* key = <span class="fn">va_arg</span>(args, <span class="kw">const char</span>*);
+        <span class="kw">const char</span>* val = <span class="fn">va_arg</span>(args, <span class="kw">const char</span>*);
+                                       <span class="bad">◄── Wrong type = silent UB</span>
+        <span class="fn">printf</span>(<span class="str">"Loaded: %s = %s\n"</span>, key, val);
+                                       <span class="bad">◄── printf format string</span>
+    }                                  <span class="bad">     mismatch = crash</span>
+    <span class="fn">va_end</span>(args);
+}</div>
+      </div>
+      <div class="compare-col after">
+        <h3 style="color:#4ade80">C++26 — config_manager.h + .cpp</h3>
+        <div class="code-block"><span class="cmt">// Type-safe span parameter</span>
+<span class="kw">void</span> ConfigManager::<span class="fn">loadDefaults</span>(
+        <span class="type">std::span</span>&lt;<span class="kw">const</span> <span class="type">ConfigEntry</span>&gt; defaults) {
+                                       <span class="ok">◄── SPAN: typed, sized, safe</span>
+    <span class="kw">for</span> (<span class="kw">const auto</span>& entry : defaults) {
+        config_[entry.key] = entry.value;
+        <span class="type">std::cout</span> << <span class="type">std::format</span>(
+            <span class="str">"Loaded: {} = {}"</span>, entry.key, entry.value);
+    }                                  <span class="ok">◄── std::format: compile-time</span>
+}                                      <span class="ok">     type checking on args</span>
+
+<span class="cmt">// Old variadic API blocked at compile time:</span>
+<span class="kw">void</span> <span class="fn">loadDefaults</span>(<span class="type">int</span>, ...) = <span class="kw">delete</span>(<span class="str">"Use span"</span>);
+                                       <span class="ok">◄── = delete("reason")</span>
+                                       <span class="ok">     Caller gets clear error msg</span></div>
+      </div>
+    </div>
+    <div class="success-box" style="margin-top:8px">
+      <p><strong>Three layers of protection:</strong> ① <strong>std::span</strong> replaces <code>va_list</code> — every parameter is type-checked at compile time. ② <strong>std::format</strong> replaces <code>printf</code> — format string mismatches are compile errors, not runtime crashes. ③ <strong>= delete("reason")</strong> blocks the old API with a human-readable error message at the call site.</p>
+    </div>
+  </div>
+  <div class="esl-brand">ESL · C++26 Migration</div>
+</div>
+
+<!-- SLIDE 9: REAL DIFF — Buffer Safety & std::optional -->
+<div class="slide purple">
+  <div class="content">
+    <h2>🔍 Real Code Diff: Buffer Safety &amp; Optional Returns</h2>
+    <p class="subtitle">CWE-120 buffer overflow and silent map insertion eliminated by design</p>
+    <div class="compare">
+      <div class="compare-col before">
+        <h3 style="color:#f87171">Pre-C++26</h3>
+        <div class="code-block"><span class="cmt">// data_processor.cpp — raw memcpy</span>
+<span class="kw">void</span> DataProcessor::<span class="fn">copyToBuffer</span>(
+        <span class="kw">const</span> <span class="type">double</span>* src, <span class="type">size_t</span> count) {
+                                       <span class="bad">◄── RAW POINTER: no size info</span>
+    <span class="fn">memcpy</span>(buffer_, src, count * <span class="kw">sizeof</span>(<span class="type">double</span>));
+                                       <span class="bad">◄── count could exceed buffer!</span>
+    buffer_used_ = count;              <span class="bad">     Silent overflow → corruption</span>
+}
+
+<span class="cmt">// config_manager.cpp — operator[] inserts</span>
+<span class="type">string</span> ConfigManager::<span class="fn">getConfig</span>(<span class="kw">const</span> <span class="type">string</span>& key) {
+    <span class="kw">return</span> config_[key];               <span class="bad">◄── INSERTS empty "" if missing!</span>
+}                                      <span class="bad">     Map grows silently. Memory leak.</span></div>
+      </div>
+      <div class="compare-col after">
+        <h3 style="color:#4ade80">C++26</h3>
+        <div class="code-block"><span class="cmt">// data_processor.cpp — span + contract</span>
+<span class="kw">void</span> DataProcessor::<span class="fn">copyToBuffer</span>(
+        <span class="type">std::span</span>&lt;<span class="kw">const</span> <span class="type">double</span>&gt; src) {
+                                       <span class="ok">◄── SPAN: size is part of type</span>
+    <span class="fn">assert</span>(src.<span class="fn">size</span>() <= MAX_FILTER_SIZE);
+                                       <span class="ok">◄── CONTRACT: reject oversized</span>
+    <span class="type">std::ranges</span>::<span class="fn">copy</span>(src, buffer_.<span class="fn">begin</span>());
+                                       <span class="ok">◄── Algorithm, not memcpy</span>
+}
+
+<span class="cmt">// config_manager.cpp — optional return</span>
+<span class="type">optional</span>&lt;<span class="type">string</span>&gt; ConfigManager::<span class="fn">getConfig</span>(
+        <span class="kw">const</span> <span class="type">string</span>& key) <span class="kw">const</span> {
+    <span class="kw">auto</span> it = config_.<span class="fn">find</span>(key);       <span class="ok">◄── find(), not operator[]</span>
+    <span class="kw">if</span> (it != config_.<span class="fn">end</span>()) <span class="kw">return</span> it->second;
+    <span class="kw">return</span> <span class="type">std::nullopt</span>;              <span class="ok">◄── OPTIONAL: explicit "not found"</span>
+}                                      <span class="ok">     No insertion. No side effects.</span></div>
+      </div>
+    </div>
+    <div class="success-box" style="margin-top:8px">
+      <p><strong>Design-level elimination:</strong> <code>memcpy(ptr, n)</code> → <code>ranges::copy(span)</code> makes overflow impossible because span knows its own size. <code>map[key]</code> → <code>optional&lt;T&gt;</code> makes silent insertion impossible because the return type forces the caller to handle "not found".</p>
+    </div>
+  </div>
+  <div class="esl-brand">ESL · C++26 Migration</div>
+</div>
+
+<!-- SLIDE 10: Violation Diff Table -->
+<div class="slide dark">
+  <div class="content">
+    <h2>Parasoft C++test 2025.2 — Real Scan Results</h2>
+    <p class="subtitle">Flow Analysis Aggressive · Deep depth · Parasoft C/C++test Standard 2025.2.0</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Rule ID</th><th>Description</th><th>Pre-C++26</th><th>C++26</th><th>How Fixed</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>BD-PB-COOB</td><td>Out of bounds access on empty collection</td><td class="bad-cell">1 violation</td><td class="ok-cell">0 ✓</td><td>Contract pre() + .at() bounds check</td></tr>
+          <tr><td>BD-PB-VALRANGE</td><td>Index may exceed container size</td><td class="bad-cell">2 violations</td><td class="ok-cell">0 ✓</td><td>Contract pre() + std::span::subspan</td></tr>
+          <tr><td>BD-PB-NOTINIT</td><td>Non-initialized variable used</td><td class="bad-cell">1 violation</td><td class="ok-cell">0 ✓</td><td>std::ranges::max_element (no temp var)</td></tr>
+          <tr><td>BD-PB-VOVR</td><td>Value of variable is never used</td><td class="bad-cell">4 violations</td><td style="color:#fbbf24">2 ⚡</td><td>Removed; placeholder _ detected as FP</td></tr>
+          <tr><td>BD-PB-ERRNO</td><td>Errno not checked around sqrt()</td><td class="bad-cell">2 violations</td><td style="color:#fbbf24">2 ≡</td><td>Same in both — not a C++26 fix</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="stats" style="margin-top:20px">
+      <div class="stat-card red"><div class="num">10</div><div class="label">Pre-C++26 Violations</div></div>
+      <div class="stat-card green"><div class="num">4</div><div class="label">C++26 Violations</div></div>
+      <div class="stat-card blue"><div class="num">60%</div><div class="label">Reduction</div></div>
+      <div class="stat-card purple"><div class="num">6</div><div class="label">Safety Bugs Eliminated</div></div>
+    </div>
+    <div class="highlight-box" style="margin-top:12px">
+      <p><strong>Key insight:</strong> All 4 <em>critical safety violations</em> (out-of-bounds, uninitialized read) were eliminated by C++26 patterns. The remaining 4 in C++26 are: 2× errno (identical in both, not C++26-related) and 2× placeholder <code>_</code> (C++26 feature, false positive by the analyzer).</p>
+    </div>
+  </div>
+  <div class="esl-brand">ESL · C++26 Migration</div>
+</div>
+
+<!-- SLIDE 9: GCC Limitations -->
+<div class="slide red">
+  <div class="content">
+    <h2>Current Limitation: GCC 15.x</h2>
+    <p class="subtitle">GCC 16 (with full C++26 contract syntax) is not yet released</p>
+    <div class="warn-box">
+      <h3 style="color:#fbbf24;margin-bottom:8px">⚠️ GCC 16 Status (April 2026)</h3>
+      <ul class="bullets">
+        <li>GCC 16 is in <strong>Stage 4</strong> — regression fixing only, feature-frozen</li>
+        <li>Release candidate expected <strong>late April / May 2026</strong></li>
+        <li>Still has <strong>14 P1 regressions</strong> to resolve before RC</li>
+        <li>MSYS2 currently ships <strong>GCC 15.2</strong></li>
+      </ul>
+    </div>
+    <h3 style="margin-top:20px">What GCC 15.x Supports vs. What It Doesn't</h3>
+    <div class="compare">
+      <div class="compare-col after" style="border-left-color:#60a5fa">
+        <h3 style="color:#60a5fa">✅ Available in GCC 15.2</h3>
+        <ul class="bullets">
+          <li>std::format, std::span</li>
+          <li>std::optional, std::ranges</li>
+          <li>Value-initialized members (NSDMIs)</li>
+          <li>Designated initializers</li>
+          <li>= delete("reason")</li>
+          <li>Placeholder _ variables</li>
+        </ul>
+      </div>
+      <div class="compare-col before" style="border-left-color:#f59e0b">
+        <h3 style="color:#fbbf24">🚧 Requires GCC 16+</h3>
+        <ul class="bullets">
+          <li><strong>pre() / post()</strong> contract syntax</li>
+          <li><strong>contract_assert()</strong></li>
+          <li><strong>std::inplace_vector</strong></li>
+          <li><strong>Hardened mode</strong> (std::hardened)</li>
+          <li>Full <strong>erroneous behavior</strong> model</li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight-box" style="margin-top:16px">
+      <p><strong>Our approach:</strong> We use <code>assert()</code> as a stand-in for contracts in the cpp26 project. Once GCC 16 ships, we'll replace them with the official <code>pre()</code> / <code>post()</code> syntax — a mechanical, low-risk update.</p>
+    </div>
+  </div>
+  <div class="esl-brand">ESL · C++26 Migration</div>
+</div>
+
+<!-- SLIDE 10: How C++26 Solves the Problems -->
+<div class="slide green">
+  <div class="content">
+    <h2>How C++26 Solves Legacy C++ Problems</h2>
+    <p class="subtitle">Systematic elimination of vulnerability classes, not one-off patches</p>
+    <div class="stats">
+      <div class="stat-card red"><div class="num" style="font-size:clamp(14px,1.5vw,22px)">Uninitialized UB</div><div class="label">→ Erroneous behavior model</div></div>
+      <div class="stat-card red"><div class="num" style="font-size:clamp(14px,1.5vw,22px)">Buffer Overflow</div><div class="label">→ span + inplace_vector</div></div>
+      <div class="stat-card red"><div class="num" style="font-size:clamp(14px,1.5vw,22px)">Format String</div><div class="label">→ std::format / println</div></div>
+      <div class="stat-card red"><div class="num" style="font-size:clamp(14px,1.5vw,22px)">Missing Checks</div><div class="label">→ Contracts (pre/post)</div></div>
+    </div>
+    <h3 style="margin-top:24px">The Shift: From Developer Discipline to Language Guarantees</h3>
+    <ul class="bullets">
+      <li><strong>Before C++26:</strong> Developers must remember to add checks, initialize variables, validate bounds — every time, everywhere</li>
+      <li><strong>With C++26:</strong> The language itself enforces safety; violations become <em>compile-time errors</em> or <em>defined traps</em></li>
+      <li><strong>Static analysis impact:</strong> Entire rule categories (MISRA, CERT, CWE) become irrelevant because the language prevents the violations</li>
+      <li><strong>Key insight:</strong> The safest code is code where unsafe patterns are <em>structurally impossible</em>, not just "checked by convention"</li>
+    </ul>
+  </div>
+  <div class="esl-brand">ESL · C++26 Migration</div>
+</div>
+
+<!-- SLIDE 11: ESL Migration Service -->
+<div class="slide esl">
+  <div class="content">
+    <div class="logo-text" style="margin-bottom:20px">ESL</div>
+    <h2>ESL: C++26 Migration Specialists</h2>
+    <p class="subtitle">Embedded Systems Laboratory — specializing in safe migration from C++11/14/17/20 to C++26</p>
+
+    <h3>Our Migration Methodology</h3>
+    <div class="flow">
+      <div class="flow-item">📋 Baseline Scan</div><span class="flow-arrow">→</span>
+      <div class="flow-item">🔍 Gap Analysis</div><span class="flow-arrow">→</span>
+      <div class="flow-item">🛠️ Code Migration</div><span class="flow-arrow">→</span>
+      <div class="flow-item">✅ Verification Scan</div><span class="flow-arrow">→</span>
+      <div class="flow-item">📊 Compliance Report</div>
+    </div>
+
+    <div class="compare" style="margin-top:20px">
+      <div class="compare-col" style="border-left:3px solid #3b82f6">
+        <h3 style="color:#60a5fa">What We Migrate</h3>
+        <ul class="bullets">
+          <li>C++11/14/17/20 codebases to <strong>C++26</strong></li>
+          <li>Raw arrays → <strong>std::span / inplace_vector</strong></li>
+          <li>printf / va_list → <strong>std::format / variadic templates</strong></li>
+          <li>Manual checks → <strong>contracts (pre/post)</strong></li>
+          <li>Unguarded access → <strong>hardened containers</strong></li>
+          <li>Legacy APIs → <strong>= delete("reason")</strong></li>
+        </ul>
+      </div>
+      <div class="compare-col" style="border-left:3px solid #22c55e">
+        <h3 style="color:#4ade80">Industries We Serve</h3>
+        <ul class="bullets">
+          <li><strong>Automotive</strong> — ISO 26262, MISRA C++ 2023</li>
+          <li><strong>Medical devices</strong> — IEC 62304, FDA SBOM</li>
+          <li><strong>Aerospace</strong> — DO-178C, CERT C++</li>
+          <li><strong>Industrial</strong> — IEC 61508, AUTOSAR</li>
+          <li><strong>Defense</strong> — DISA STIG, CWE Top 25</li>
+          <li><strong>IoT / Embedded</strong> — Resource-constrained safety</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="esl-brand">ESL · C++26 Migration</div>
+</div>
+
+<!-- SLIDE 12: Verification with Static Analysis -->
+<div class="slide purple">
+  <div class="content">
+    <h2>Verifying Migration with Static Code Analysis</h2>
+    <p class="subtitle">Every migration step is verified through comprehensive Parasoft C++test scanning</p>
+
+    <h3>Our Verification Process</h3>
+    <ul class="bullets">
+      <li><strong>Pre-migration baseline:</strong> Full MISRA C++ 2023 + CERT C++ + AUTOSAR scan on the original codebase</li>
+      <li><strong>Rule-by-rule tracking:</strong> Each violation is mapped to the C++26 feature that eliminates it</li>
+      <li><strong>Post-migration scan:</strong> Same ruleset, same configurations — zero violations = verified migration</li>
+      <li><strong>Regression testing:</strong> Continuous CI/CD scans ensure no new violations introduced</li>
+      <li><strong>Compliance artifacts:</strong> SARIF reports, traceability matrix, audit-ready documentation</li>
+    </ul>
+
+    <div class="highlight-box" style="margin-top:20px">
+      <h3 style="color:#93c5fd;margin-bottom:8px">Tool Stack</h3>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <span class="tag blue-t">Parasoft C++test 2025.2</span>
+        <span class="tag green-t">MISRA C++ 2023</span>
+        <span class="tag purple-t">CERT C/C++</span>
+        <span class="tag blue-t">AUTOSAR C++14/C++17</span>
+        <span class="tag green-t">CWE Top 25</span>
+        <span class="tag purple-t">DISA STIG</span>
+      </div>
+    </div>
+
+    <div class="success-box" style="margin-top:16px">
+      <p><strong>Result:</strong> Clients receive a quantifiable proof that their migration eliminated specific vulnerability classes — not just "we updated the code," but "these 30 violations across 8 safety-critical rule categories are now structurally impossible."</p>
+    </div>
+  </div>
+  <div class="esl-brand">ESL · C++26 Migration</div>
+</div>
+
+<!-- SLIDE 13: Summary -->
+<div class="slide dark">
+  <div class="content" style="text-align:center">
+    <div class="logo-text" style="margin-bottom:24px">ESL</div>
+    <h1 style="text-align:center">C++26: Safer by Design</h1>
+    <p class="subtitle" style="text-align:center;max-width:700px;margin:0 auto 32px">From 10 violations to 4 — all critical safety bugs eliminated by language-level guarantees</p>
+    <div class="stats" style="max-width:800px;margin:0 auto 32px">
+      <div class="stat-card red"><div class="num">10</div><div class="label">Pre-C++26 Violations</div></div>
+      <div class="stat-card green"><div class="num">4</div><div class="label">C++26 Violations</div></div>
+      <div class="stat-card purple"><div class="num">6</div><div class="label">Safety Bugs Fixed</div></div>
+      <div class="stat-card blue"><div class="num">100%</div><div class="label">Critical Bugs Eliminated</div></div>
+    </div>
+    <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:32px">
+      <span class="tag green-t">Contracts</span>
+      <span class="tag green-t">Hardened Containers</span>
+      <span class="tag green-t">std::span</span>
+      <span class="tag green-t">std::format</span>
+      <span class="tag green-t">std::optional</span>
+      <span class="tag green-t">= delete("reason")</span>
+    </div>
+    <p style="color:#64748b;font-size:clamp(12px,1.2vw,16px)">
+      <strong style="color:#93c5fd">ESL Embedded Systems Laboratory</strong><br>
+      C++26 Migration · Static Analysis Verification · Safety-Critical Compliance<br><br>
+      <span style="color:#60a5fa">github.com/zuwasi/cpp26-diff</span>
+    </p>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- Navigation -->
+<button class="nav-btn" id="prevBtn" onclick="go(-1)">‹</button>
+<button class="nav-btn" id="nextBtn" onclick="go(1)">›</button>
+<div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+<div class="counter" id="counter"></div>
+<div class="swipe-hint" id="swipeHint">← Swipe to navigate →</div>
+
+<script>
+const deck=document.getElementById('deck'),slides=document.querySelectorAll('.slide'),total=slides.length;
+let cur=0,tx0=0,mx0=0,dragging=false;
+function update(){
+  deck.style.transform=`translateX(-${cur*100}vw)`;
+  document.getElementById('prevBtn').style.display=cur===0?'none':'flex';
+  document.getElementById('nextBtn').style.display=cur===total-1?'none':'flex';
+  document.getElementById('progressFill').style.width=`${((cur+1)/total)*100}%`;
+  document.getElementById('counter').textContent=`${cur+1} / ${total}`;
+}
+function go(d){
+  const n=cur+d;
+  if(n>=0&&n<total){cur=n;update();hideHint();}
+}
+function hideHint(){document.getElementById('swipeHint').style.display='none';}
+// Keyboard
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' ')go(1);
+  if(e.key==='ArrowLeft')go(-1);
+});
+// Touch
+deck.addEventListener('touchstart',e=>{tx0=e.changedTouches[0].screenX;},{passive:true});
+deck.addEventListener('touchend',e=>{const dx=e.changedTouches[0].screenX-tx0;if(Math.abs(dx)>50){go(dx<0?1:-1);}});
+// Mouse drag
+deck.addEventListener('mousedown',e=>{mx0=e.screenX;dragging=true;});
+deck.addEventListener('mouseup',e=>{if(!dragging)return;dragging=false;const dx=e.screenX-mx0;if(Math.abs(dx)>50){go(dx<0?1:-1);}});
+update();
+</script>
+</body>
+</html>

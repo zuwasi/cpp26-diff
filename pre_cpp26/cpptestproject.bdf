@@ -1,7 +1,7 @@
 ---
 --- Parasoft C++test BDF for Pre-C++26 project
 ---
-compile;gcc_9-64;-std=c++20;-I src;src/sensor_data.cpp
-compile;gcc_9-64;-std=c++20;-I src;src/data_processor.cpp
-compile;gcc_9-64;-std=c++20;-I src;src/config_manager.cpp
-compile;gcc_9-64;-std=c++20;-I src;src/main.cpp
+compile;gcc_11-64;-std=c++20;-I src;src/sensor_data.cpp
+compile;gcc_11-64;-std=c++20;-I src;src/data_processor.cpp
+compile;gcc_11-64;-std=c++20;-I src;src/config_manager.cpp
+compile;gcc_11-64;-std=c++20;-I src;src/main.cpp

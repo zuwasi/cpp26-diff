@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Metrics writerVersion="0.1.1" toolVer="2025.2.0" execEnv="win32_x86_64" hasViols="true" project="" buildId="2026-04-21" climode="true" toolDispName="C/C++test" toolId="c++test" machine="AI-logic-lab" tag="${scontrol_branch}-win32_x86_64" time="2026-04-21T17:23:08+03:00" id="1776357833951" lang="en_US" user="danie" toolName="DTP Engine for C/C++">
+  <TestParameters cmdLn="cpptestcli -config builtin://Recommended Rules -compiler vc_14_3-64 -report C:\amp_demos\cpp26-diff\cpp26\report_msvc -- cl.exe /std:c++latest /EHsc /I src /c src\sensor_data.cpp src\data_processor.cpp src\config_manager.cpp src\main.cpp"/>
+  <TestConfig machine="AI-logic-lab" pseudoUrl="builtin://Recommended Rules" name="Recommended Rules" user="danie"/>
+  <Analyzers>
+    <Analyzer id="com.parasoft.xtest.scope.analyzer" name="Scope Analyzer" ver="10.7.3.20251030"/>
+    <Analyzer id="com.parasoft.xtest.cpp.analyzer.static.code" name="Parasoft C/C++ Code Analyzer" ver="10.7.3.20251120B2842"/>
+    <Analyzer id="com.parasoft.xtest.dupcode.parser" name="Code Duplication Parser" ver="10.7.3.20251030"/>
+    <Analyzer id="com.parasoft.xtest.cpp.analyzer.static.pattern" name="Parasoft C/C++ Static Analyzer" ver="10.7.3.20251120B2842"/>
+    <Analyzer id="com.parasoft.xtest.cpp.analyzer.static.flow" name="Parasoft C/C++ Flow Analyzer" ver="10.7.3.20251014B6172"/>
+    <Analyzer id="com.parasoft.xtest.cpp.analyzer.static.metrics" name="Parasoft C/C++ Metrics Analyzer" ver="10.7.3.20251120B2842"/>
+    <Analyzer id="com.parasoft.xtest.cpp.analyzer.static.dupcode" name="Code Duplication Detector" ver="10.7.3.20251030"/>
+    <Analyzer id="com.parasoft.xtest.cpp.analyzer.static.global" name="Parasoft C/C++ Global Static Analyzer" ver="10.7.3.20251120B2842"/>
+  </Analyzers>
+  <Repositories/>
+  <Locations>
+    <Loc locRef="1" auth="danie" totLns="57" uri="file:/C:/Amp_demos/cpp26-diff/cpp26/src/sensor_data.cpp" hash="-1108162112"/>
+    <Loc locRef="2" auth="danie" totLns="67" uri="file:/C:/Amp_demos/cpp26-diff/cpp26/src/data_processor.cpp" hash="1050599378"/>
+    <Loc locRef="3" auth="danie" totLns="36" uri="file:/C:/Amp_demos/cpp26-diff/cpp26/src/config_manager.cpp" hash="-1659364054"/>
+    <Loc locRef="4" auth="danie" totLns="73" uri="file:/C:/Amp_demos/cpp26-diff/cpp26/src/main.cpp" hash="1650768352"/>
+  </Locations>
+  <Values>
+  <Metric id="METRIC.NOPLIF" itemId="1487353463" item="config_manager.cpp" val="36.0" ln="1" locRef="3"/>
+  <Metric id="METRIC.NOPLIF" itemId="-1637693824" item="main.cpp" val="73.0" ln="1" locRef="4"/>
+  <Metric id="METRIC.NOPLIF" itemId="-1741856398" item="sensor_data.cpp" val="57.0" ln="1" locRef="1"/>
+  <Metric id="METRIC.NOPLIF" itemId="332823172" item="data_processor.cpp" val="67.0" ln="1" locRef="2"/>
+  <Metric id="METRIC.NOSLIM" itemId="-1741856398#SensorData::getReading(unsigned long long) const" item="SensorData::getReading(unsigned long long) const" val="4.0" type="SensorData" locRef="1" startPos="0" endPos="0" endLn="31" startLn="27"/>
+  <Metric id="METRIC.NOSLIM" itemId="1487353463#ConfigManager::getConfig(const std::string&amp;) const" item="ConfigManager::getConfig(const std::string&amp;) const" val="7.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="20" startLn="13"/>
+  <Metric id="METRIC.NOSLIM" itemId="1487353463#ConfigManager::hasConfig(const std::string&amp;) const" item="ConfigManager::hasConfig(const std::string&amp;) const" val="3.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="29" startLn="26"/>
+  <Metric id="METRIC.NOSLIM" itemId="-1637693824#main" item="main" val="40.0" locRef="4" startPos="0" endPos="0" endLn="74" startLn="8"/>
+  <Metric id="METRIC.NOSLIM" itemId="-1741856398#SensorData::SensorData(unsigned long long)" item="SensorData::SensorData(unsigned long long)" val="1.0" type="SensorData" ln="7" locRef="1"/>
+  <Metric id="METRIC.NOSLIM" itemId="1487353463#ConfigManager::setConfig(const std::string&amp;, const std::string&amp;)" item="ConfigManager::setConfig(const std::string&amp;, const std::string&amp;)" val="4.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="11" startLn="7"/>
+  <Metric id="METRIC.NOSLIM" itemId="-1741856398#SensorData::getReadingsInRange(unsigned long long, unsigned long long) const" item="SensorData::getReadingsInRange(unsigned long long, unsigned long long) const" val="5.0" type="SensorData" locRef="1" startPos="0" endPos="0" endLn="39" startLn="34"/>
+  <Metric id="METRIC.NOSLIM" itemId="-1741856398#SensorData::addReading(double, double, double, unsigned int)" item="SensorData::addReading(double, double, double, unsigned int)" val="13.0" type="SensorData" locRef="1" startPos="0" endPos="0" endLn="24" startLn="10"/>
+  <Metric id="METRIC.NOSLIM" itemId="332823172#DataProcessor::copyToBuffer(std::span&lt;const double, (unsigned long long)18446744073709551615>)" item="DataProcessor::copyToBuffer(std::span&lt;const double, (unsigned long long)18446744073709551615>)" val="5.0" type="DataProcessor" locRef="2" startPos="0" endPos="0" endLn="68" startLn="63"/>
+  <Metric id="METRIC.NOSLIM" itemId="-1741856398#SensorData::getAverageTemperature() const" item="SensorData::getAverageTemperature() const" val="6.0" type="SensorData" locRef="1" startPos="0" endPos="0" endLn="48" startLn="41"/>
+  <Metric id="METRIC.NOSLIM" itemId="1487353463#ConfigManager::removeConfig(const std::string&amp;)" item="ConfigManager::removeConfig(const std::string&amp;)" val="3.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="25" startLn="22"/>
+  <Metric id="METRIC.NOSLIM" itemId="332823172#DataProcessor::computeStdDeviation(const SensorData &amp;)" item="DataProcessor::computeStdDeviation(const SensorData &amp;)" val="13.0" type="DataProcessor" locRef="2" startPos="0" endPos="0" endLn="50" startLn="33"/>
+  <Metric id="METRIC.NOSLIM" itemId="332823172#DataProcessor::applyMovingAverage(const SensorData &amp;, unsigned long long)" item="DataProcessor::applyMovingAverage(const SensorData &amp;, unsigned long long)" val="18.0" type="DataProcessor" locRef="2" startPos="0" endPos="0" endLn="32" startLn="8"/>
+  <Metric id="METRIC.NOSLIM" itemId="332823172#DataProcessor::calibrate(double)" item="DataProcessor::calibrate(double)" val="6.0" type="DataProcessor" locRef="2" startPos="0" endPos="0" endLn="61" startLn="51"/>
+  <Metric id="METRIC.NOSLIM" itemId="-1741856398#SensorData::getMaxPressure() const" item="SensorData::getMaxPressure() const" val="7.0" type="SensorData" locRef="1" startPos="0" endPos="0" endLn="58" startLn="50"/>
+  <Metric id="METRIC.NOSLIM" itemId="1487353463#ConfigManager::loadDefaults(std::span&lt;const ConfigEntry, (unsigned long long)18446744073709551615>)" item="ConfigManager::loadDefaults(std::span&lt;const ConfigEntry, (unsigned long long)18446744073709551615>)" val="6.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="37" startLn="31"/>
+  <Metric id="METRIC.CC" itemId="-1741856398#SensorData::SensorData(unsigned long long)" item="SensorData::SensorData(unsigned long long)" val="1.0" type="SensorData" ln="7" locRef="1"/>
+  <Metric id="METRIC.CC" itemId="-1741856398#SensorData::addReading(double, double, double, unsigned int)" item="SensorData::addReading(double, double, double, unsigned int)" val="1.0" type="SensorData" locRef="1" startPos="0" endPos="0" endLn="24" startLn="10"/>
+  <Metric id="METRIC.CC" itemId="-1741856398#SensorData::getReading(unsigned long long) const" item="SensorData::getReading(unsigned long long) const" val="1.0" type="SensorData" locRef="1" startPos="0" endPos="0" endLn="31" startLn="27"/>
+  <Metric id="METRIC.CC" itemId="-1741856398#SensorData::getReadingsInRange(unsigned long long, unsigned long long) const" item="SensorData::getReadingsInRange(unsigned long long, unsigned long long) const" val="1.0" type="SensorData" locRef="1" startPos="0" endPos="0" endLn="39" startLn="34"/>
+  <Metric id="METRIC.CC" itemId="-1741856398#SensorData::getAverageTemperature() const" item="SensorData::getAverageTemperature() const" val="1.0" type="SensorData" locRef="1" startPos="0" endPos="0" endLn="48" startLn="41"/>
+  <Metric id="METRIC.CC" itemId="-1741856398#SensorData::getMaxPressure() const" item="SensorData::getMaxPressure() const" val="1.0" type="SensorData" locRef="1" startPos="0" endPos="0" endLn="58" startLn="50"/>
+  <Metric id="METRIC.CC" itemId="332823172#DataProcessor::applyMovingAverage(const SensorData &amp;, unsigned long long)" item="DataProcessor::applyMovingAverage(const SensorData &amp;, unsigned long long)" val="3.0" type="DataProcessor" locRef="2" startPos="0" endPos="0" endLn="32" startLn="8"/>
+  <Metric id="METRIC.CC" itemId="332823172#DataProcessor::computeStdDeviation(const SensorData &amp;)" item="DataProcessor::computeStdDeviation(const SensorData &amp;)" val="2.0" type="DataProcessor" locRef="2" startPos="0" endPos="0" endLn="50" startLn="33"/>
+  <Metric id="METRIC.CC" itemId="332823172#DataProcessor::calibrate(double)" item="DataProcessor::calibrate(double)" val="1.0" type="DataProcessor" locRef="2" startPos="0" endPos="0" endLn="61" startLn="51"/>
+  <Metric id="METRIC.CC" itemId="332823172#DataProcessor::copyToBuffer(std::span&lt;const double, (unsigned long long)18446744073709551615>)" item="DataProcessor::copyToBuffer(std::span&lt;const double, (unsigned long long)18446744073709551615>)" val="1.0" type="DataProcessor" locRef="2" startPos="0" endPos="0" endLn="68" startLn="63"/>
+  <Metric id="METRIC.CC" itemId="1487353463#ConfigManager::setConfig(const std::string&amp;, const std::string&amp;)" item="ConfigManager::setConfig(const std::string&amp;, const std::string&amp;)" val="1.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="11" startLn="7"/>
+  <Metric id="METRIC.CC" itemId="1487353463#ConfigManager::getConfig(const std::string&amp;) const" item="ConfigManager::getConfig(const std::string&amp;) const" val="2.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="20" startLn="13"/>
+  <Metric id="METRIC.CC" itemId="1487353463#ConfigManager::removeConfig(const std::string&amp;)" item="ConfigManager::removeConfig(const std::string&amp;)" val="1.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="25" startLn="22"/>
+  <Metric id="METRIC.CC" itemId="1487353463#ConfigManager::hasConfig(const std::string&amp;) const" item="ConfigManager::hasConfig(const std::string&amp;) const" val="1.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="29" startLn="26"/>
+  <Metric id="METRIC.CC" itemId="1487353463#ConfigManager::loadDefaults(std::span&lt;const ConfigEntry, (unsigned long long)18446744073709551615>)" item="ConfigManager::loadDefaults(std::span&lt;const ConfigEntry, (unsigned long long)18446744073709551615>)" val="2.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="37" startLn="31"/>
+  <Metric id="METRIC.CC" itemId="-1637693824#main" item="main" val="4.0" locRef="4" startPos="0" endPos="0" endLn="74" startLn="8"/>
+  <Metric id="METRIC.NBD" itemId="-1741856398#SensorData::SensorData(unsigned long long)" item="SensorData::SensorData(unsigned long long)" val="0.0" type="SensorData" ln="7" locRef="1"/>
+  <Metric id="METRIC.NBD" itemId="-1741856398#SensorData::addReading(double, double, double, unsigned int)" item="SensorData::addReading(double, double, double, unsigned int)" val="0.0" type="SensorData" locRef="1" startPos="0" endPos="0" endLn="24" startLn="10"/>
+  <Metric id="METRIC.NBD" itemId="-1741856398#SensorData::getReading(unsigned long long) const" item="SensorData::getReading(unsigned long long) const" val="0.0" type="SensorData" locRef="1" startPos="0" endPos="0" endLn="31" startLn="27"/>
+  <Metric id="METRIC.NBD" itemId="-1741856398#SensorData::getReadingsInRange(unsigned long long, unsigned long long) const" item="SensorData::getReadingsInRange(unsigned long long, unsigned long long) const" val="0.0" type="SensorData" locRef="1" startPos="0" endPos="0" endLn="39" startLn="34"/>
+  <Metric id="METRIC.NBD" itemId="-1741856398#SensorData::getAverageTemperature() const" item="SensorData::getAverageTemperature() const" val="0.0" type="SensorData" locRef="1" startPos="0" endPos="0" endLn="48" startLn="41"/>
+  <Metric id="METRIC.NBD" itemId="-1741856398#SensorData::getMaxPressure() const" item="SensorData::getMaxPressure() const" val="0.0" type="SensorData" locRef="1" startPos="0" endPos="0" endLn="58" startLn="50"/>
+  <Metric id="METRIC.NBD" itemId="332823172#DataProcessor::applyMovingAverage(const SensorData &amp;, unsigned long long)" item="DataProcessor::applyMovingAverage(const SensorData &amp;, unsigned long long)" val="2.0" type="DataProcessor" locRef="2" startPos="0" endPos="0" endLn="32" startLn="8"/>
+  <Metric id="METRIC.NBD" itemId="332823172#DataProcessor::computeStdDeviation(const SensorData &amp;)" item="DataProcessor::computeStdDeviation(const SensorData &amp;)" val="1.0" type="DataProcessor" locRef="2" startPos="0" endPos="0" endLn="50" startLn="33"/>
+  <Metric id="METRIC.NBD" itemId="332823172#DataProcessor::calibrate(double)" item="DataProcessor::calibrate(double)" val="0.0" type="DataProcessor" locRef="2" startPos="0" endPos="0" endLn="61" startLn="51"/>
+  <Metric id="METRIC.NBD" itemId="332823172#DataProcessor::copyToBuffer(std::span&lt;const double, (unsigned long long)18446744073709551615>)" item="DataProcessor::copyToBuffer(std::span&lt;const double, (unsigned long long)18446744073709551615>)" val="0.0" type="DataProcessor" locRef="2" startPos="0" endPos="0" endLn="68" startLn="63"/>
+  <Metric id="METRIC.NBD" itemId="1487353463#ConfigManager::setConfig(const std::string&amp;, const std::string&amp;)" item="ConfigManager::setConfig(const std::string&amp;, const std::string&amp;)" val="0.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="11" startLn="7"/>
+  <Metric id="METRIC.NBD" itemId="1487353463#ConfigManager::getConfig(const std::string&amp;) const" item="ConfigManager::getConfig(const std::string&amp;) const" val="1.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="20" startLn="13"/>
+  <Metric id="METRIC.NBD" itemId="1487353463#ConfigManager::removeConfig(const std::string&amp;)" item="ConfigManager::removeConfig(const std::string&amp;)" val="0.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="25" startLn="22"/>
+  <Metric id="METRIC.NBD" itemId="1487353463#ConfigManager::hasConfig(const std::string&amp;) const" item="ConfigManager::hasConfig(const std::string&amp;) const" val="0.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="29" startLn="26"/>
+  <Metric id="METRIC.NBD" itemId="1487353463#ConfigManager::loadDefaults(std::span&lt;const ConfigEntry, (unsigned long long)18446744073709551615>)" item="ConfigManager::loadDefaults(std::span&lt;const ConfigEntry, (unsigned long long)18446744073709551615>)" val="1.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="37" startLn="31"/>
+  <Metric id="METRIC.NBD" itemId="-1637693824#main" item="main" val="2.0" locRef="4" startPos="0" endPos="0" endLn="74" startLn="8"/>
+</Values>
+</Metrics>

@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Metrics writerVersion="0.1.1" toolVer="2025.2.0" execEnv="win32_x86_64" hasViols="false" project="" buildId="2026-04-21" climode="true" toolDispName="C/C++test" toolId="c++test" machine="AI-logic-lab" tag="${scontrol_branch}-win32_x86_64" time="2026-04-21T17:25:20+03:00" id="1776357965130" lang="en_US" user="danie" toolName="DTP Engine for C/C++">
+  <TestParameters cmdLn="cpptestcli -config builtin://Recommended Rules -compiler gcc_11-64 -report C:\amp_demos\cpp26-diff\pre_cpp26\report_gcc -- g++.exe -std=c++20 -I src -c src/sensor_data.cpp src/data_processor.cpp src/config_manager.cpp src/main.cpp"/>
+  <TestConfig machine="AI-logic-lab" pseudoUrl="builtin://Recommended Rules" name="Recommended Rules" user="danie"/>
+  <Analyzers>
+    <Analyzer id="com.parasoft.xtest.scope.analyzer" name="Scope Analyzer" ver="10.7.3.20251030"/>
+    <Analyzer id="com.parasoft.xtest.cpp.analyzer.static.code" name="Parasoft C/C++ Code Analyzer" ver="10.7.3.20251120B2842"/>
+    <Analyzer id="com.parasoft.xtest.dupcode.parser" name="Code Duplication Parser" ver="10.7.3.20251030"/>
+    <Analyzer id="com.parasoft.xtest.cpp.analyzer.static.pattern" name="Parasoft C/C++ Static Analyzer" ver="10.7.3.20251120B2842"/>
+    <Analyzer id="com.parasoft.xtest.cpp.analyzer.static.flow" name="Parasoft C/C++ Flow Analyzer" ver="10.7.3.20251014B6172"/>
+    <Analyzer id="com.parasoft.xtest.cpp.analyzer.static.metrics" name="Parasoft C/C++ Metrics Analyzer" ver="10.7.3.20251120B2842"/>
+    <Analyzer id="com.parasoft.xtest.cpp.analyzer.static.dupcode" name="Code Duplication Detector" ver="10.7.3.20251030"/>
+    <Analyzer id="com.parasoft.xtest.cpp.analyzer.static.global" name="Parasoft C/C++ Global Static Analyzer" ver="10.7.3.20251120B2842"/>
+  </Analyzers>
+  <Repositories/>
+  <Locations>
+    <Loc locRef="1" auth="danie" totLns="77" uri="file:/C:/Amp_demos/cpp26-diff/pre_cpp26/src/sensor_data.cpp" hash="-2090126499"/>
+    <Loc locRef="2" auth="danie" totLns="79" uri="file:/C:/Amp_demos/cpp26-diff/pre_cpp26/src/data_processor.cpp" hash="-68333847"/>
+    <Loc locRef="3" auth="danie" totLns="36" uri="file:/C:/Amp_demos/cpp26-diff/pre_cpp26/src/config_manager.cpp" hash="977910233"/>
+    <Loc locRef="4" auth="danie" totLns="66" uri="file:/C:/Amp_demos/cpp26-diff/pre_cpp26/src/main.cpp" hash="1817374863"/>
+  </Locations>
+  <Values>
+  <Metric id="METRIC.NOPLIF" itemId="-206377965" item="config_manager.cpp" val="36.0" ln="1" locRef="3"/>
+  <Metric id="METRIC.NOPLIF" itemId="-1360908256" item="data_processor.cpp" val="79.0" ln="1" locRef="2"/>
+  <Metric id="METRIC.NOPLIF" itemId="1500180822" item="sensor_data.cpp" val="77.0" ln="1" locRef="1"/>
+  <Metric id="METRIC.NOPLIF" itemId="-1133801700" item="main.cpp" val="66.0" ln="1" locRef="4"/>
+  <Metric id="METRIC.NOSLIM" itemId="-206377965#loadDefaults" item="loadDefaults" val="11.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="37" startLn="24"/>
+  <Metric id="METRIC.NOSLIM" itemId="-206377965#hasConfig" item="hasConfig" val="3.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="22" startLn="19"/>
+  <Metric id="METRIC.NOSLIM" itemId="-206377965#removeConfig" item="removeConfig" val="3.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="18" startLn="15"/>
+  <Metric id="METRIC.NOSLIM" itemId="-206377965#getConfig" item="getConfig" val="3.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="14" startLn="11"/>
+  <Metric id="METRIC.NOSLIM" itemId="-206377965#setConfig" item="setConfig" val="3.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="9" startLn="5"/>
+  <Metric id="METRIC.CC" itemId="-206377965#setConfig" item="setConfig" val="1.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="9" startLn="5"/>
+  <Metric id="METRIC.CC" itemId="-206377965#getConfig" item="getConfig" val="1.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="14" startLn="11"/>
+  <Metric id="METRIC.CC" itemId="-206377965#removeConfig" item="removeConfig" val="1.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="18" startLn="15"/>
+  <Metric id="METRIC.CC" itemId="-206377965#hasConfig" item="hasConfig" val="1.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="22" startLn="19"/>
+  <Metric id="METRIC.CC" itemId="-206377965#loadDefaults" item="loadDefaults" val="2.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="37" startLn="24"/>
+  <Metric id="METRIC.NBD" itemId="-206377965#setConfig" item="setConfig" val="0.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="9" startLn="5"/>
+  <Metric id="METRIC.NBD" itemId="-206377965#getConfig" item="getConfig" val="0.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="14" startLn="11"/>
+  <Metric id="METRIC.NBD" itemId="-206377965#removeConfig" item="removeConfig" val="0.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="18" startLn="15"/>
+  <Metric id="METRIC.NBD" itemId="-206377965#hasConfig" item="hasConfig" val="0.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="22" startLn="19"/>
+  <Metric id="METRIC.NBD" itemId="-206377965#loadDefaults" item="loadDefaults" val="1.0" type="ConfigManager" locRef="3" startPos="0" endPos="0" endLn="37" startLn="24"/>
+</Values>
+</Metrics>
